@@ -1,9 +1,10 @@
 const https = require('node:https');
 const fs = require('fs');
 
-let bank = new Object();
+let bank = {}
+const apiId = fs.readFileSync('apiKey.html');
 
-https.get('https://api.openweathermap.org/data/2.5/weather?lat=35&lon=130&appid=a2447cc75255e17ec76e48f8e41200b9', (res) => {
+https.get(`https://api.openweathermap.org/data/2.5/weather?lat=35&lon=130&appid=${apiId}`, (res) => {
     console.log('statusCode:', res.statusCode);
 
     res.on('data', (d) => {
