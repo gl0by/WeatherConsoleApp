@@ -1,29 +1,35 @@
-const https = require('node:https');
+const https = require('https');
 const fs = require('fs');
 
-let bank = {}
-const apiId = fs.readFileSync('apiKey.html');
+//The url we want is: 'www.random.org/integers/?num=1&min=1&max=10&col=1&base=10&format=plain&rnd=new'
+var options = {
+  host: 'https://api.openweathermap.org',
+  path: '/data/2.5/weather?lat=51&lon=0.01&appid=a2447cc75255e17ec76e48f8e41200b9'
+};
 
-https.get(`https://api.openweathermap.org/data/2.5/weather?lat=35&lon=130&appid=${apiId}`, (res) => {
-    console.log('statusCode:', res.statusCode);
+callback = function(res) {
+  var str = '';
 
-    res.on('data', (d) => {
-        fs.writeFileSync('data.json', d, (err) => {
-            if (err) {
-                console.log('error:', err);
-                return
-            }
-        });
-    });
-
-}).on('error', (e) => {
-    console.error(e);
+  //another chunk of data has been received, so append it to `str`
+  res.on('data', function (chunk) {
+    str += chunk;
   });
 
-bank = JSON.parse(fs.readFileSync('data.json'));
+  //the whole response has been received, so we just print it out here
+  res.on('end', function () {
+    console.log(str);
+  });
 
-console.log(
-    "CITY: " + bank.name,
-    "Temperature: " + ((bank.main.temp - 273.15).toFixed(2)),
-    "Feels like: " + ((bank.main.feels_like - 273.15).toFixed(2))
-);
+  res.on('error', function (err) {
+    console.log(err);
+  });
+
+  fs.writeFileSync('data.json', d, (err) => {
+    if (err) {
+        console.log('error:', err);
+        return
+    }
+  });
+}
+
+https.request(options, callback).end();
