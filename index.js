@@ -6,8 +6,9 @@ var options = {
   path: '/data/2.5/weather?lat=51&lon=0.01&appid=a2447cc75255e17ec76e48f8e41200b9'
 };
 
+var str = '';
+
 callback = function(res) {
-  var str = '';
 
   res.on('data', function (chunk) {
     str += chunk;
@@ -21,12 +22,13 @@ callback = function(res) {
     console.log(err);
   });
 
-  fs.writeFileSync('data.json', d, (err) => {
+}
+
+https.request('https://api.openweathermap.org/data/2.5/weather?lat=51&lon=0.01&appid=a2447cc75255e17ec76e48f8e41200b9', callback).end();
+
+fs.writeFileSync('/data.json', str, (err) => {
     if (err) {
         console.log('error:', err);
         return
     }
   });
-}
-
-https.request(options, callback).end();
